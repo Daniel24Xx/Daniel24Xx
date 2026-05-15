@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>PARA TI BOTSITA</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow: hidden;
+      color: white;
+      background-color: #05000b;
+      background-image:
+        linear-gradient(rgba(5, 0, 12, 0.35), rgba(5, 0, 12, 0.62)),
+        url("FONDO.jpg");
+      background-position: center center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: scroll;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255, 130, 240, 0.12), transparent 25%),
+        radial-gradient(circle at 80% 25%, rgba(145, 95, 255, 0.16), transparent 25%),
+        radial-gradient(circle at 50% 80%, rgba(255, 80, 120, 0.08), transparent 28%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      width: 100%;
+      min-height: 100vh;
+      padding: 30px 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .stars {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background-image:
+        radial-gradient(2px 2px at 40px 60px, rgba(255,255,255,.9), transparent),
+        radial-gradient(1.5px 1.5px at 180px 120px, rgba(255,255,255,.8), transparent),
+        radial-gradient(1.5px 1.5px at 360px 90px, rgba(255,255,255,.7), transparent),
+        radial-gradient(2px 2px at 520px 180px, rgba(255,255,255,.7), transparent),
+        radial-gradient(1.5px 1.5px at 760px 50px, rgba(255,255,255,.8), transparent),
+        radial-gradient(1.5px 1.5px at 940px 200px, rgba(255,255,255,.7), transparent);
+      background-size: 1000px 260px;
+      animation: driftStars 140s linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes driftStars {
+      from { transform: translateY(0); }
+      to { transform: translateY(-260px); }
+    }
+
+    /* CORAZONES LILA ILUMINADOS */
+    .hearts-column {
+      position: absolute;
+      left: 10px;
+      top: 0;
+      bottom: 0;
+      width: 95px;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 4;
+    }
+
+    .heart {
+      position: absolute;
+      left: 20px;
+      bottom: -70px;
+      font-size: 34px;
+      color: #caa6ff;
+      opacity: 0.96;
+      animation: floatHeart linear infinite;
+      filter:
+        drop-shadow(0 0 6px rgba(202, 166, 255, 0.9))
+        drop-shadow(0 0 14px rgba(182, 120, 255, 0.8))
+        drop-shadow(0 0 24px rgba(146, 90, 255, 0.7));
+    }
+
+    @keyframes floatHeart {
+      0% {
+        transform: translateY(0) translateX(0) scale(0.8);
+        opacity: 0;
+      }
+
+      15% {
+        opacity: 1;
+      }
+
+      50% {
+        transform: translateY(-40vh) translateX(12px) scale(1);
+      }
+
+      100% {
+        transform: translateY(-95vh) translateX(-10px) scale(1.15);
+        opacity: 0;
+      }
+    }
+
+    /* CONTENIDO PRINCIPAL */
+    .main-content {
+      position: relative;
+      z-index: 3;
+      width: calc(100% - 95px);
+      margin-left: 95px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+      padding-right: 110px;
+      padding-bottom: 30px;
+    }
+
+    .gallery-row {
+      display: flex;
+      justify-content: center;
+      gap: 45px;
+      flex-wrap: wrap;
+    }
+
+    .photo-card {
+      width: 310px;
+      height: 190px;
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow:
+        0 10px 30px rgba(0,0,0,0.28),
+        0 0 22px rgba(194,145,255,0.18);
+      cursor: pointer;
+      transition: transform 0.35s ease, box-shadow 0.35s ease, border 0.35s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    .photo-card:hover {
+      transform: scale(1.04);
+      box-shadow:
+        0 14px 34px rgba(0,0,0,0.34),
+        0 0 26px rgba(224,180,255,0.28);
+    }
+
+    .photo-card.active-glow {
+      transform: scale(1.06);
+      border: 2px solid rgba(220, 185, 255, 0.95);
+      box-shadow:
+        0 0 12px rgba(255, 255, 255, 0.7),
+        0 0 28px rgba(202, 166, 255, 0.95),
+        0 0 55px rgba(150, 90, 255, 0.75),
+        0 14px 34px rgba(0,0,0,0.34);
+    }
+
+    .photo-card.active-glow::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      border: 2px solid rgba(255,255,255,0.65);
+      box-shadow:
+        inset 0 0 18px rgba(220, 185, 255, 0.65),
+        0 0 22px rgba(220, 185, 255, 0.85);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-card::after {
+      content: "✨";
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+      font-size: 20px;
+      z-index: 3;
+    }
+
+    .center-text {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 12px 20px;
+    }
+
+    .center-text h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      color: #f7dbff;
+      text-shadow:
+        0 0 12px rgba(255,255,255,0.3),
+        0 0 22px rgba(203,144,255,0.35);
+    }
+
+    .center-text p {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #f8f0ff;
+      opacity: 0.96;
+    }
+
+    .separator {
+      width: 72%;
+      height: 1px;
+      margin: 0 auto;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.75), transparent);
+    }
+
+    /* BOTÓN PLAY */
+    .music-trigger {
+      position: fixed;
+      right: 25px;
+      bottom: 25px;
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      font-size: 1.4rem;
+      color: white;
+      z-index: 120;
+      background: radial-gradient(circle at top, #ffb2f4, #8e54e9 70%);
+      box-shadow:
+        0 10px 25px rgba(0,0,0,0.35),
+        0 0 22px rgba(190,124,255,0.55),
+        0 0 40px rgba(255,145,255,0.35);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .music-trigger:hover {
+      transform: scale(1.08);
+      box-shadow:
+        0 12px 28px rgba(0,0,0,0.4),
+        0 0 28px rgba(190,124,255,0.75),
+        0 0 50px rgba(255,145,255,0.5);
+    }
+
+    /* OVERLAY MUSICAL */
+    .music-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at center, rgba(85, 25, 125, 0.35), transparent 38%),
+        linear-gradient(135deg, #020005 0%, #07000f 45%, #10001e 100%);
+      opacity: 0;
+      pointer-events: none;
+      clip-path: circle(0% at calc(100% - 67px) calc(100% - 67px));
+      transition:
+        clip-path 1.45s cubic-bezier(.16,.84,.26,1),
+        opacity 1s ease;
+    }
+
+    .music-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+      clip-path: circle(150% at calc(100% - 67px) calc(100% - 67px));
+    }
+
+    .music-overlay::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(1.5px 1.5px at 10% 20%, rgba(255,255,255,.55), transparent),
+        radial-gradient(1px 1px at 20% 80%, rgba(255,255,255,.45), transparent),
+        radial-gradient(1.5px 1.5px at 35% 30%, rgba(255,255,255,.55), transparent),
+        radial-gradient(1px 1px at 50% 70%, rgba(255,255,255,.35), transparent),
+        radial-gradient(1.5px 1.5px at 75% 25%, rgba(255,255,255,.5), transparent),
+        radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,.4), transparent);
+      background-size: 900px 500px;
+      animation: slowStars 140s linear infinite;
+      opacity: 0.55;
+    }
+
+    @keyframes slowStars {
+      from { transform: translateY(0); }
+      to { transform: translateY(-260px); }
+    }
+
+    .overlay-content {
+      position: relative;
+      z-index: 3;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 25px;
+      text-align: center;
+    }
+
+    .lyrics-stage {
+      position: relative;
+      width: min(980px, 92%);
+      min-height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      --lyric-color: #ff69e6;
+      --lyric-color-two: #9b6dff;
+    }
+
+    .smoke-layer {
+      position: absolute;
+      inset: -40px;
+      z-index: 1;
+      pointer-events: none;
+      overflow: visible;
+      opacity: 0;
+    }
+
+    .smoke-layer.smoke-active {
+      animation: smokeAppear 3.5s ease forwards;
+    }
+
+    .smoke {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(24px);
+      opacity: 0;
+      mix-blend-mode: screen;
+      transform: scale(0.7);
+    }
+
+    .smoke.s1 {
+      width: 230px;
+      height: 130px;
+      left: 8%;
+      top: 46%;
+      background: var(--lyric-color);
+    }
+
+    .smoke.s2 {
+      width: 330px;
+      height: 160px;
+      left: 30%;
+      top: 35%;
+      background: var(--lyric-color-two);
+    }
+
+    .smoke.s3 {
+      width: 240px;
+      height: 140px;
+      right: 8%;
+      top: 48%;
+      background: var(--lyric-color);
+    }
+
+    .smoke.s4 {
+      width: 360px;
+      height: 180px;
+      left: 26%;
+      top: 58%;
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .smoke-layer.smoke-active .smoke.s1 {
+      animation: smokeMoveOne 3.5s ease forwards;
+    }
+
+    .smoke-layer.smoke-active .smoke.s2 {
+      animation: smokeMoveTwo 3.5s ease forwards;
+    }
+
+    .smoke-layer.smoke-active .smoke.s3 {
+      animation: smokeMoveThree 3.5s ease forwards;
+    }
+
+    .smoke-layer.smoke-active .smoke.s4 {
+      animation: smokeMoveFour 3.5s ease forwards;
+    }
+
+    @keyframes smokeAppear {
+      0% { opacity: 0; }
+      20% { opacity: 0.48; }
+      70% { opacity: 0.35; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes smokeMoveOne {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) translateX(0) scale(0.7);
+      }
+
+      25% {
+        opacity: 0.34;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-65px) translateX(-65px) scale(1.35);
+      }
+    }
+
+    @keyframes smokeMoveTwo {
+      0% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.65);
+      }
+
+      25% {
+        opacity: 0.4;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-75px) translateX(18px) scale(1.45);
+      }
+    }
+
+    @keyframes smokeMoveThree {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) translateX(0) scale(0.7);
+      }
+
+      25% {
+        opacity: 0.32;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-60px) translateX(65px) scale(1.32);
+      }
+    }
+
+    @keyframes smokeMoveFour {
+      0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.75);
+      }
+
+      25% {
+        opacity: 0.22;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-85px) scale(1.6);
+      }
+    }
+
+    .lyric-line {
+      position: relative;
+      z-index: 2;
+      font-size: clamp(1.35rem, 2.6vw, 2.65rem);
+      font-weight: 900;
+      line-height: 1.55;
+      color: #fffaff;
+      letter-spacing: 1px;
+      opacity: 0;
+      transform: translateY(18px) scale(0.98);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      text-shadow:
+        1px 1px 0 rgba(255,255,255,0.28),
+        3px 3px 0 rgba(80, 20, 130, 0.95),
+        6px 6px 0 rgba(10, 0, 25, 0.9),
+        0 0 12px rgba(255,255,255,0.5),
+        0 0 25px var(--lyric-color),
+        0 0 48px var(--lyric-color-two),
+        0 0 85px var(--lyric-color);
+      filter: drop-shadow(0 0 18px var(--lyric-color));
+    }
+
+    .lyric-line.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .lyric-line.fade-out {
+      opacity: 0;
+      transform: translateY(-18px) scale(0.97);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .typing-cursor {
+      display: inline-block;
+      margin-left: 4px;
+      color: var(--lyric-color);
+      animation: blinkCursor 0.7s infinite;
+      filter: drop-shadow(0 0 10px var(--lyric-color));
+    }
+
+    @keyframes blinkCursor {
+      0%, 45% { opacity: 1; }
+      46%, 100% { opacity: 0; }
+    }
+
+    @media (max-width: 900px) {
+      body {
+        overflow-y: auto;
+      }
+
+      .main-content {
+        width: calc(100% - 70px);
+        margin-left: 70px;
+        padding-right: 0;
+      }
+
+      .photo-card {
+        width: 270px;
+        height: 170px;
+      }
+
+      .center-text h1 {
+        font-size: 1.7rem;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .container {
+        padding: 20px 14px 100px;
+      }
+
+      .main-content {
+        width: calc(100% - 55px);
+        margin-left: 55px;
+      }
+
+      .gallery-row {
+        gap: 18px;
+      }
+
+      .photo-card {
+        width: 100%;
+        max-width: 320px;
+        height: 185px;
+      }
+
+      .separator {
+        width: 92%;
+      }
+
+      .music-trigger {
+        width: 74px;
+        height: 74px;
+        right: 16px;
+        bottom: 16px;
+      }
+
+      .lyric-line {
+        line-height: 1.45;
+        font-size: clamp(1.15rem, 5vw, 2rem);
+      }
+
+      .hearts-column {
+        width: 70px;
+      }
+
+      .heart {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="stars"></div>
+
+  <div class="container">
+    <div class="hearts-column" id="heartsColumn"></div>
+
+    <div class="main-content">
+      <div class="gallery-row">
+        <div class="photo-card">
+          <img src="img1.png" alt="Foto 1">
+        </div>
+
+        <div class="photo-card">
+          <img src="img2.png" alt="Foto 2">
+        </div>
+      </div>
+
+      <div class="center-text">
+        <h1> Oa botsita 😊 </h1>
+        <p>
+          Hay personas que no necesitan hacer mucho para verse bonitas; tú solo apareces y ya cambia el día
+        </p>
+      </div>
+
+      <div class="separator"></div>
+
+      <div class="gallery-row">
+        <div class="photo-card">
+          <img src="img3.png" alt="Foto 3">
+        </div>
+
+        <div class="photo-card">
+          <img src="img4.png" alt="Foto 4">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="music-trigger" id="openMusic">▶</button>
+
+  <div class="music-overlay" id="musicOverlay">
+    <div class="overlay-content">
+      <div class="lyrics-stage">
+        <div class="smoke-layer" id="smokeLayer">
+          <div class="smoke s1"></div>
+          <div class="smoke s2"></div>
+          <div class="smoke s3"></div>
+          <div class="smoke s4"></div>
+        </div>
+
+        <div class="lyric-line" id="lyricLine">
+          Presiona play para empezar
+        </div>
+      </div>
+    </div>
+
+    <audio id="audio" src="cancion.mp3"></audio>
+  </div>
+
+  <script>
+    /* CORAZONES LILA ILUMINADOS */
+    const heartsColumn = document.getElementById("heartsColumn");
+
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.innerHTML = "💜";
+
+      const size = Math.random() * 14 + 28;
+      const left = Math.random() * 24;
+      const duration = Math.random() * 3 + 7;
+
+      heart.style.left = left + "px";
+      heart.style.fontSize = size + "px";
+      heart.style.animationDuration = duration + "s";
+
+      heartsColumn.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, duration * 1000);
+    }
+
+    setInterval(createHeart, 1100);
+
+    /* EFECTO FOTOS */
+    document.querySelectorAll(".photo-card").forEach(card => {
+      card.addEventListener("click", () => {
+        card.classList.add("active-glow");
+
+        setTimeout(() => {
+          card.classList.remove("active-glow");
+        }, 900);
+      });
+    });
+
+    /* MÚSICA + LETRA LRC PERFECTA */
+    const openMusic = document.getElementById("openMusic");
+    const musicOverlay = document.getElementById("musicOverlay");
+    const audio = document.getElementById("audio");
+    const lyricLine = document.getElementById("lyricLine");
+    const smokeLayer = document.getElementById("smokeLayer");
+    const lyricsStage = document.querySelector(".lyrics-stage");
+
+    let savedTime = 0;
+    let isExpanded = false;
+    let currentLineIndex = -1;
+    let typingInterval = null;
+    let fadeTimeout = null;
+
+    /*
+      PEGA AQUÍ TU LETRA CON TIEMPOS.
+
+      Ejemplo:
+      [00:22.29]Primera línea
+      [00:27.55]Segunda línea
+    */
+    const lrcText = `
+[00:22.29]For just a chance to win your heart
+[00:27.55]You could set the bar
+[00:30.67]Beyond the stars
+[00:33.64]I'll do anything, anything you ask me to
+[00:43.71]Say you want the moon, watch me learn to fly
+[00:49.04]Ain't a mountain you could point to I wouldn't climb
+[00:54.77]It's crazy, but it's true, there's nothing I won't do
+[01:00.49]I'd risk it all for you
+[01:06.93]To hold your hand and call you mine
+[01:12.20]I'm tryna be your man
+[01:14.77]Till the end of time
+[01:17.56]Oh, I'll do anything, anything you ask me to
+[01:28.03]I would run through a fire just to be by your side
+[01:34.19]If your heart's on the line, you could take mine
+[01:39.25]It's crazy, but it's true, there's nothing I won't do
+[01:45.12]I'd risk it all for you
+[01:51.60]I would swim across the sea just to show you
+[01:57.17]Sacrifice my life just to hold you
+[02:02.20]I could go on and on to prove that you belong
+[02:07.45]Here in my arms
+[02:34.99]Say you want the moon, watch me learn to fly
+[02:40.73]Ain't a mountain you could point to I wouldn't climb
+[02:46.25]It's crazy, but it's true, there's nothing I won't do
+[02:52.21]I'd risk it all for you
+[02:57.63]It's crazy, but it's true, there's nothing I won't do
+[03:03.61]I'd risk it all for you
+[03:11.08]
+`;
+
+    const lyricColors = [
+      { color: "#ff4fd8", colorTwo: "#7b61ff" },
+      { color: "#74fff1", colorTwo: "#bc68ff" },
+      { color: "#ffe16f", colorTwo: "#ff5fc4" },
+      { color: "#ff8ad6", colorTwo: "#9b6dff" },
+      { color: "#ffffff", colorTwo: "#caa6ff" }
+    ];
+
+    const syncedLyrics = parseLRC(lrcText);
+
+    openMusic.addEventListener("click", async () => {
+      if (!isExpanded) {
+        musicOverlay.classList.add("active");
+        isExpanded = true;
+
+        audio.currentTime = savedTime;
+        updateLyrics(true);
+
+        try {
+          await audio.play();
+          openMusic.innerHTML = "❚❚";
+        } catch (error) {
+          console.log("No se pudo reproducir el audio:", error);
+        }
+      } else {
+        savedTime = audio.currentTime;
+        audio.pause();
+
+        musicOverlay.classList.remove("active");
+        isExpanded = false;
+        openMusic.innerHTML = "▶";
+      }
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      savedTime = audio.currentTime;
+      updateLyrics(false);
+    });
+
+    audio.addEventListener("ended", () => {
+      savedTime = 0;
+      isExpanded = false;
+      currentLineIndex = -1;
+
+      clearInterval(typingInterval);
+      clearTimeout(fadeTimeout);
+
+      musicOverlay.classList.remove("active");
+      openMusic.innerHTML = "▶";
+      lyricLine.classList.remove("show", "fade-out");
+      smokeLayer.classList.remove("smoke-active");
+      lyricLine.innerHTML = "Presiona play para empezar";
+    });
+
+    function parseLRC(text) {
+      const lines = text
+        .trim()
+        .split("\n")
+        .map(line => line.trim())
+        .filter(Boolean);
+
+      const parsed = [];
+
+      for (const line of lines) {
+        const match = line.match(/\[(\d{2}):(\d{2})\.(\d{2})\](.*)/);
+
+        if (!match) continue;
+
+        const minutes = Number(match[1]);
+        const seconds = Number(match[2]);
+        const centiseconds = Number(match[3]);
+        const lyric = match[4].trim();
+
+        parsed.push({
+          time: minutes * 60 + seconds + centiseconds / 100,
+          text: lyric
+        });
+      }
+
+      return parsed.sort((a, b) => a.time - b.time);
+    }
+
+    function updateLyrics(force = false) {
+      if (!syncedLyrics.length) {
+        lyricLine.innerHTML = "Pega tu letra con tiempos<br>donde dice PEGA_AQUI_TU_LETRA_CON_TIEMPOS";
+        lyricLine.classList.add("show");
+        return;
+      }
+
+      let index = -1;
+
+      for (let i = 0; i < syncedLyrics.length; i++) {
+        if (audio.currentTime >= syncedLyrics[i].time) {
+          index = i;
+        }
+      }
+
+      if (index === -1) {
+        showDots();
+        return;
+      }
+
+      if (!force && index === currentLineIndex) return;
+
+      currentLineIndex = index;
+      showTimedLine(index);
+    }
+
+    function showDots() {
+      if (currentLineIndex === -99) return;
+
+      currentLineIndex = -99;
+
+      clearInterval(typingInterval);
+      clearTimeout(fadeTimeout);
+
+      lyricLine.classList.remove("show", "fade-out");
+      smokeLayer.classList.remove("smoke-active");
+
+      lyricsStage.style.setProperty("--lyric-color", "#caa6ff");
+      lyricsStage.style.setProperty("--lyric-color-two", "#ffffff");
+
+      lyricLine.innerHTML = "...";
+
+      void lyricLine.offsetWidth;
+
+      lyricLine.classList.add("show");
+    }
+
+    function showTimedLine(index) {
+      const current = syncedLyrics[index];
+      const next = syncedLyrics[index + 1];
+
+      if (!current || !current.text) return;
+
+      const theme = lyricColors[index % lyricColors.length];
+
+      lyricsStage.style.setProperty("--lyric-color", theme.color);
+      lyricsStage.style.setProperty("--lyric-color-two", theme.colorTwo);
+
+      clearInterval(typingInterval);
+      clearTimeout(fadeTimeout);
+
+      lyricLine.classList.remove("show", "fade-out");
+      smokeLayer.classList.remove("smoke-active");
+      lyricLine.innerHTML = "";
+
+      void lyricLine.offsetWidth;
+      void smokeLayer.offsetWidth;
+
+      lyricLine.classList.add("show");
+      smokeLayer.classList.add("smoke-active");
+
+      const durationToNext = next
+        ? Math.max(next.time - current.time, 1.2)
+        : 4;
+
+      typeTextByDuration(current.text, durationToNext);
+
+      const isSecondLine = (index + 1) % 2 === 0;
+
+      const fadeStart = isSecondLine
+        ? Math.max((durationToNext - 0.9) * 1000, 700)
+        : Math.max((durationToNext - 0.45) * 1000, 500);
+
+      fadeTimeout = setTimeout(() => {
+        lyricLine.classList.add("fade-out");
+      }, fadeStart);
+    }
+
+    function typeTextByDuration(text, durationToNext) {
+      const safeText = escapeHTML(text);
+      let index = 0;
+      let output = "";
+
+      const totalChars = safeText.length;
+
+      /*
+        Más rápido para que la línea termine antes
+        y haya un respiro antes de cambiar.
+      */
+      const availableTime = Math.max(durationToNext * 1000 - 1300, 450);
+      const speed = Math.max(Math.floor(availableTime / totalChars), 14);
+
+      typingInterval = setInterval(() => {
+        if (index >= safeText.length) {
+          clearInterval(typingInterval);
+          lyricLine.innerHTML = output;
+          return;
+        }
+
+        const char = safeText[index];
+        output += char;
+
+        lyricLine.innerHTML = output + '<span class="typing-cursor">|</span>';
+        index++;
+      }, speed);
+    }
+
+    function escapeHTML(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+  </script>
+</body>
+</html>
